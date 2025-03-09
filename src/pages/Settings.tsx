@@ -86,7 +86,7 @@ const Settings: React.FC = () => {
         id: user.id,
         full_name: fullName,
         username,
-        updated_at: new Date()
+        updated_at: new Date().toISOString() // Convert Date to ISO string for Supabase
       };
       
       const { error } = await supabase
@@ -139,7 +139,7 @@ const Settings: React.FC = () => {
       const updates = {
         id: user.id,
         avatar_url: data.publicUrl,
-        updated_at: new Date()
+        updated_at: new Date().toISOString() // Convert Date to ISO string for Supabase
       };
       
       const { error: updateError } = await supabase
