@@ -1,11 +1,15 @@
 
-import React from 'react';
-import { LogOut, Plus, Home, Settings } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { LogOut, Plus, Home, Settings, Calendar as CalendarIcon } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { useToast } from '@/hooks/use-toast';
 import { useNavigate, useLocation } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { supabase } from '@/integrations/supabase/client';
+import { Calendar } from '@/components/ui/calendar';
+import { format } from 'date-fns';
+import { Popover, PopoverContent, PopoverTrigger } from '@/components/ui/popover';
+import { Badge } from '@/components/ui/badge';
 
 interface AppSidebarProps {
   userName?: string;
@@ -21,6 +25,32 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   const { toast } = useToast();
   const navigate = useNavigate();
   const location = useLocation();
+  const [isCalendarOpen, setIsCalendarOpen] = useState(false);
+  const [selectedDate, setSelectedDate] = useState<Date | undefined>(new Date());
+  const [eventDates, setEventDates] = useState<Date[]>([]);
+
+  // Fetch event dates from Supabase
+  useEffect(() => {
+    const fetchEventDates = async () => {
+      try {
+        const { data, error } = await supabase
+          .from('events')
+          .select('date');
+        
+        if (error) throw error;
+        
+        if (data) {
+          // Convert string dates to Date objects
+          const dates = data.map(event => new Date(event.date));
+          setEventDates(dates);
+        }
+      } catch (error) {
+        console.error('Error fetching event dates:', error);
+      }
+    };
+    
+    fetchEventDates();
+  }, []);
 
   const handleAddEvent = () => {
     navigate('/add-event');
@@ -45,6 +75,28 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
       .map(part => part[0])
       .join('')
       .toUpperCase();
+  };
+
+  // Helper to check if a date has events
+  const hasEvent = (date: Date) => {
+    return eventDates.some(eventDate => 
+      eventDate.getDate() === date.getDate() &&
+      eventDate.getMonth() === date.getMonth() &&
+      eventDate.getFullYear() === date.getFullYear()
+    );
+  };
+
+  // Handle date selection in calendar
+  const handleDateSelect = (date: Date | undefined) => {
+    setSelectedDate(date);
+    if (date && hasEvent(date)) {
+      // Navigate to dashboard with date filter
+      navigate(`/?date=${format(date, 'yyyy-MM-dd')}`);
+      toast({
+        title: "Date Selected",
+        description: `Showing events for ${format(date, 'MMMM dd, yyyy')}`,
+      });
+    }
   };
 
   const initials = getInitials(userName);
@@ -99,6 +151,41 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             <Plus size={18} className="mr-2" />
             Add Event
           </Button>
+          
+          {/* Calendar Button & Popover */}
+          <Popover open={isCalendarOpen} onOpenChange={setIsCalendarOpen}>
+            <PopoverTrigger asChild>
+              <Button 
+                variant="ghost"
+                className="w-full justify-start text-base text-gray-700 hover:bg-gray-100"
+                onClick={() => setIsCalendarOpen(true)}
+              >
+                <CalendarIcon size={18} className="mr-2" />
+                Calendar
+              </Button>
+            </PopoverTrigger>
+            <PopoverContent className="w-auto p-0" align="start">
+              <Calendar
+                mode="single"
+                selected={selectedDate}
+                onSelect={handleDateSelect}
+                className="p-3 pointer-events-auto"
+                components={{
+                  DayContent: ({ date }) => (
+                    <div className="relative">
+                      {date.getDate()}
+                      {hasEvent(date) && (
+                        <Badge 
+                          className="absolute top-0 right-0 w-2 h-2 p-0 bg-blue-500 rounded-full"
+                          aria-label="This date has events"
+                        />
+                      )}
+                    </div>
+                  ),
+                }}
+              />
+            </PopoverContent>
+          </Popover>
           
           <Button 
             variant={isActive('/settings') ? "default" : "ghost"}

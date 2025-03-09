@@ -1,6 +1,6 @@
 
 import React, { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, useLocation } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
 import { Button } from '@/components/ui/button';
 import EventCard, { EventData } from '@/components/EventCard';
@@ -8,6 +8,11 @@ import EventSearch from '@/components/EventSearch';
 import EventFilters from '@/components/EventFilters';
 import AppSidebar from '@/components/AppSidebar';
 import { supabase } from '@/integrations/supabase/client';
+
+// Function to parse query parameters
+const useQuery = () => {
+  return new URLSearchParams(useLocation().search);
+};
 
 const Dashboard: React.FC = () => {
   const [events, setEvents] = useState<EventData[]>([]);
@@ -18,6 +23,8 @@ const Dashboard: React.FC = () => {
   
   const navigate = useNavigate();
   const { toast } = useToast();
+  const query = useQuery();
+  const dateFilter = query.get('date');
   
   // Check if user is logged in and fetch events
   useEffect(() => {
@@ -33,6 +40,21 @@ const Dashboard: React.FC = () => {
     
     checkAuth();
   }, [navigate]);
+  
+  // Apply date filter from URL if present
+  useEffect(() => {
+    if (dateFilter) {
+      setActiveFilters(prev => ({
+        ...prev,
+        specificDate: dateFilter
+      }));
+      
+      toast({
+        title: "Date Filter Applied",
+        description: `Showing events for ${new Date(dateFilter).toLocaleDateString()}`,
+      });
+    }
+  }, [dateFilter, toast]);
   
   // Fetch events from Supabase
   const fetchEvents = async () => {
@@ -124,6 +146,17 @@ const Dashboard: React.FC = () => {
       } else if (activeFilters.date === 'past') {
         result = result.filter(event => new Date(event.date) < new Date());
       }
+    }
+    
+    // Apply specific date filter if coming from calendar
+    if (activeFilters.specificDate) {
+      const filterDate = new Date(activeFilters.specificDate);
+      result = result.filter(event => {
+        const eventDate = new Date(event.date);
+        return eventDate.getDate() === filterDate.getDate() &&
+               eventDate.getMonth() === filterDate.getMonth() &&
+               eventDate.getFullYear() === filterDate.getFullYear();
+      });
     }
     
     if (activeFilters.duration) {
