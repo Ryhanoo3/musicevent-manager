@@ -7,61 +7,81 @@ import EventCard, { EventData } from '@/components/EventCard';
 import EventSearch from '@/components/EventSearch';
 import EventFilters from '@/components/EventFilters';
 import AppSidebar from '@/components/AppSidebar';
-
-// Mock data
-const MOCK_EVENTS: EventData[] = [
-  {
-    id: 'EVT-001',
-    name: 'Summer Music Festival',
-    date: '2023-07-15',
-    duration: '8 hours',
-    rooms: ['Main Hall', 'Studio A', 'Lounge']
-  },
-  {
-    id: 'EVT-002',
-    name: 'Jazz Night',
-    date: '2023-07-22',
-    duration: '3 hours',
-    rooms: ['Studio B']
-  },
-  {
-    id: 'EVT-003',
-    name: 'Classical Concert',
-    date: '2023-08-05',
-    duration: '2 hours',
-    rooms: ['Main Hall']
-  },
-  {
-    id: 'EVT-004',
-    name: 'Rock Band Showcase',
-    date: '2023-08-12',
-    duration: '4 hours',
-    rooms: ['Studio A', 'Studio B']
-  }
-];
+import { supabase } from '@/integrations/supabase/client';
 
 const Dashboard: React.FC = () => {
-  const [events, setEvents] = useState<EventData[]>(MOCK_EVENTS);
-  const [filteredEvents, setFilteredEvents] = useState<EventData[]>(MOCK_EVENTS);
+  const [events, setEvents] = useState<EventData[]>([]);
+  const [filteredEvents, setFilteredEvents] = useState<EventData[]>([]);
   const [searchTerm, setSearchTerm] = useState('');
   const [activeFilters, setActiveFilters] = useState<Record<string, string>>({});
+  const [loading, setLoading] = useState(true);
   
   const navigate = useNavigate();
   const { toast } = useToast();
   
-  // Check if user is logged in
+  // Check if user is logged in and fetch events
   useEffect(() => {
-    const userData = localStorage.getItem('user');
-    if (!userData) {
-      navigate('/login');
-    }
+    const checkAuth = async () => {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate('/login');
+        return;
+      }
+
+      fetchEvents();
+    };
+    
+    checkAuth();
   }, [navigate]);
+  
+  // Fetch events from Supabase
+  const fetchEvents = async () => {
+    try {
+      setLoading(true);
+      
+      const { data, error } = await supabase
+        .from('events')
+        .select(`
+          id,
+          name,
+          date,
+          duration,
+          event_rooms(room_name)
+        `);
+      
+      if (error) throw error;
+
+      if (data) {
+        // Transform data to match EventData structure
+        const formattedEvents: EventData[] = data.map(event => ({
+          id: event.id,
+          name: event.name,
+          date: event.date,
+          duration: event.duration,
+          rooms: event.event_rooms ? event.event_rooms.map((r: any) => r.room_name) : []
+        }));
+        
+        setEvents(formattedEvents);
+        setFilteredEvents(formattedEvents);
+      }
+    } catch (error) {
+      console.error('Error fetching events:', error);
+      toast({
+        title: "Error",
+        description: "Failed to load events",
+        variant: "destructive"
+      });
+    } finally {
+      setLoading(false);
+    }
+  };
   
   // Get user data
   const userDataString = localStorage.getItem('user');
   const userData = userDataString ? JSON.parse(userDataString) : { userName: 'Guest' };
   
-  const handleLogout = () => {
+  const handleLogout = async () => {
+    await supabase.auth.signOut();
     localStorage.removeItem('user');
     navigate('/login');
     toast({
@@ -97,10 +117,8 @@ const Dashboard: React.FC = () => {
       );
     }
     
-    // Apply filters - this is simplified filtering logic
-    // In a real app, this would be more sophisticated
+    // Apply filters
     if (activeFilters.date) {
-      // Simple filtering example
       if (activeFilters.date === 'upcoming') {
         result = result.filter(event => new Date(event.date) > new Date());
       } else if (activeFilters.date === 'past') {
@@ -109,7 +127,6 @@ const Dashboard: React.FC = () => {
     }
     
     if (activeFilters.duration) {
-      // Simple filtering example
       if (activeFilters.duration === 'short') {
         result = result.filter(event => event.duration.includes('2 hours') || event.duration.includes('1 hour'));
       }
@@ -143,7 +160,11 @@ const Dashboard: React.FC = () => {
             </div>
           </div>
           
-          {filteredEvents.length > 0 ? (
+          {loading ? (
+            <div className="flex justify-center items-center py-20">
+              <div className="animate-pulse text-gray-500">Loading events...</div>
+            </div>
+          ) : filteredEvents.length > 0 ? (
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {filteredEvents.map((event) => (
                 <EventCard key={event.id} event={event} />
@@ -153,7 +174,7 @@ const Dashboard: React.FC = () => {
             <div className="text-center py-12 bg-gray-50 rounded-lg">
               <p className="text-gray-500 text-lg">No events match your search or filters.</p>
               <Button 
-                className="mt-4 bg-blue-600 hover:bg-blue-700"
+                className="mt-4 bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-600 hover:to-blue-800 text-white"
                 onClick={() => {
                   setSearchTerm('');
                   setActiveFilters({});
