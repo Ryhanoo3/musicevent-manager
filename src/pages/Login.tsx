@@ -7,6 +7,8 @@ import { Button } from '@/components/ui/button';
 import { Label } from '@/components/ui/label';
 import { useToast } from '@/hooks/use-toast';
 import { supabase } from '@/integrations/supabase/client';
+import { AlertCircle } from 'lucide-react';
+import { Alert, AlertDescription } from '@/components/ui/alert';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -14,6 +16,7 @@ const Login: React.FC = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [isRegister, setIsRegister] = useState(false);
   const [fullName, setFullName] = useState('');
+  const [errorMessage, setErrorMessage] = useState<string | null>(null);
   
   const navigate = useNavigate();
   const { toast } = useToast();
@@ -33,6 +36,7 @@ const Login: React.FC = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     setIsLoading(true);
+    setErrorMessage(null);
 
     try {
       if (isRegister) {
@@ -96,6 +100,18 @@ const Login: React.FC = () => {
       }
     } catch (error: any) {
       console.error('Auth error:', error);
+      
+      // Set a user-friendly error message
+      if (error.message.includes("Invalid login credentials")) {
+        setErrorMessage("Invalid email or password. Please try again.");
+      } else if (error.message.includes("User already registered")) {
+        setErrorMessage("This email is already registered. Please log in instead.");
+      } else if (error.message.includes("Email not confirmed")) {
+        setErrorMessage("Please check your email and confirm your account before logging in.");
+      } else {
+        setErrorMessage(error.message || "An error occurred during authentication. Please try again.");
+      }
+      
       toast({
         title: isRegister ? "Registration failed" : "Login failed",
         description: error.message || "Please check your credentials and try again",
@@ -104,11 +120,6 @@ const Login: React.FC = () => {
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleDemoLogin = () => {
-    setEmail('demo@example.com');
-    setPassword('password123');
   };
 
   return (
@@ -124,6 +135,13 @@ const Login: React.FC = () => {
             </CardDescription>
           </CardHeader>
           <CardContent>
+            {errorMessage && (
+              <Alert variant="destructive" className="mb-4">
+                <AlertCircle className="h-4 w-4" />
+                <AlertDescription>{errorMessage}</AlertDescription>
+              </Alert>
+            )}
+            
             <form onSubmit={handleSubmit} className="space-y-4">
               {isRegister && (
                 <div className="space-y-2">
@@ -195,20 +213,18 @@ const Login: React.FC = () => {
               </div>
             </div>
             
-            {!isRegister && (
-              <Button 
-                variant="outline" 
-                className="w-full border-blue-200 text-blue-600 hover:bg-blue-50 transition-all duration-300"
-                onClick={handleDemoLogin}
-              >
-                Use Demo Credentials
-              </Button>
-            )}
+            <div className="text-center text-sm text-gray-500">
+              <p>For testing, you can register a new account</p>
+              <p>or use any valid email and password combination</p>
+            </div>
             
             <Button 
               variant="link" 
               className="text-sm text-blue-600"
-              onClick={() => setIsRegister(!isRegister)}
+              onClick={() => {
+                setIsRegister(!isRegister);
+                setErrorMessage(null);
+              }}
             >
               {isRegister 
                 ? "Already have an account? Login" 
