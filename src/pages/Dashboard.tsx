@@ -2,6 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { useToast } from '@/hooks/use-toast';
+import { Button } from '@/components/ui/button';
 import EventCard, { EventData } from '@/components/EventCard';
 import EventSearch from '@/components/EventSearch';
 import EventFilters from '@/components/EventFilters';
