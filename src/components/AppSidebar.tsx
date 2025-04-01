@@ -105,23 +105,23 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
   const isActive = (path: string) => location.pathname === path;
 
   return (
-    <div className="w-64 min-h-screen bg-white border-r border-gray-200 flex flex-col items-center py-8 animate-fade-in shadow-md">
+    <div className="w-64 min-h-screen bg-scheme-dominant border-r border-scheme-accent/20 flex flex-col items-center py-8 animate-fade-in shadow-md">
       <div className="flex-1 flex flex-col items-center gap-8 w-full">
         {/* Profile Avatar */}
         <div className="flex flex-col items-center gap-3">
           <Avatar 
-            className="w-20 h-20 border-4 border-white shadow-lg transition-transform hover:scale-105 duration-300 cursor-pointer"
+            className="w-20 h-20 border-4 border-scheme-secondary shadow-lg transition-transform hover:scale-105 duration-300 cursor-pointer"
             onClick={handleGoToSettings}
           >
             {avatarUrl ? (
               <AvatarImage src={avatarUrl} alt={userName} />
             ) : (
-              <AvatarFallback className="bg-gradient-to-br from-blue-500 to-blue-700 text-white text-2xl">
+              <AvatarFallback className="bg-scheme-secondary text-scheme-dominant text-2xl">
                 {initials}
               </AvatarFallback>
             )}
           </Avatar>
-          <span className="font-medium text-gray-700">{userName}</span>
+          <span className="font-medium text-scheme-accent">{userName}</span>
         </div>
 
         {/* Navigation Menu */}
@@ -130,8 +130,8 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             variant={isActive('/') ? "default" : "ghost"}
             className={`w-full justify-start text-base ${
               isActive('/') 
-                ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
+                ? 'bg-scheme-secondary hover:bg-scheme-secondary/90 text-scheme-dominant'
+                : 'text-scheme-accent hover:bg-scheme-dominant/80 hover:text-scheme-secondary'
             }`}
             onClick={handleGoHome}
           >
@@ -143,8 +143,8 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             variant={isActive('/add-event') ? "default" : "ghost"}
             className={`w-full justify-start text-base ${
               isActive('/add-event') 
-                ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
+                ? 'bg-scheme-secondary hover:bg-scheme-secondary/90 text-scheme-dominant'
+                : 'text-scheme-accent hover:bg-scheme-dominant/80 hover:text-scheme-secondary'
             }`}
             onClick={handleAddEvent}
           >
@@ -157,26 +157,26 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             <PopoverTrigger asChild>
               <Button 
                 variant="ghost"
-                className="w-full justify-start text-base text-gray-700 hover:bg-gray-100"
+                className="w-full justify-start text-base text-scheme-accent hover:bg-scheme-dominant/80 hover:text-scheme-secondary"
                 onClick={() => setIsCalendarOpen(true)}
               >
                 <CalendarIcon size={18} className="mr-2" />
                 Calendar
               </Button>
             </PopoverTrigger>
-            <PopoverContent className="w-auto p-0" align="start">
+            <PopoverContent className="w-auto p-0 bg-scheme-dominant border border-scheme-accent/20" align="start">
               <Calendar
                 mode="single"
                 selected={selectedDate}
                 onSelect={handleDateSelect}
-                className="p-3 pointer-events-auto"
+                className="p-3 pointer-events-auto text-scheme-accent"
                 components={{
                   DayContent: ({ date }) => (
                     <div className="relative">
                       {date.getDate()}
                       {hasEvent(date) && (
                         <Badge 
-                          className="absolute top-0 right-0 w-2 h-2 p-0 bg-blue-500 rounded-full"
+                          className="absolute top-0 right-0 w-2 h-2 p-0 bg-scheme-secondary rounded-full"
                           aria-label="This date has events"
                         />
                       )}
@@ -191,8 +191,8 @@ export const AppSidebar: React.FC<AppSidebarProps> = ({
             variant={isActive('/settings') ? "default" : "ghost"}
             className={`w-full justify-start text-base ${
               isActive('/settings') 
-                ? 'bg-blue-600 hover:bg-blue-700 text-white'
-                : 'text-gray-700 hover:bg-gray-100'
+                ? 'bg-scheme-secondary hover:bg-scheme-secondary/90 text-scheme-dominant'
+                : 'text-scheme-accent hover:bg-scheme-dominant/80 hover:text-scheme-secondary'
             }`}
             onClick={handleGoToSettings}
           >

@@ -5,74 +5,75 @@
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 224 71% 4%;
+    --background: 174 35% 11%; /* Based on dominant #142524 */
+    --foreground: 190 4% 87%;  /* Based on accent #CCD1D2 */
 
-    --card: 0 0% 100%;
-    --card-foreground: 224 71% 4%;
+    --card: 174 35% 15%;
+    --card-foreground: 190 4% 87%;
 
-    --popover: 0 0% 100%;
-    --popover-foreground: 224 71% 4%;
+    --popover: 174 35% 11%;
+    --popover-foreground: 190 4% 87%;
 
-    --primary: 215 100% 50%;
-    --primary-foreground: 210 40% 98%;
+    --primary: 129 68% 47%;    /* Based on secondary #30C142 */
+    --primary-foreground: 174 35% 11%;
 
-    --secondary: 142 69% 62%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 190 4% 87%;   /* Based on accent #CCD1D2 */
+    --secondary-foreground: 174 35% 11%;
 
-    --muted: 210 40% 96.1%;
-    --muted-foreground: 215.4 16.3% 46.9%;
+    --muted: 174 35% 20%;
+    --muted-foreground: 190 4% 70%;
 
-    --accent: 215 100% 50%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 129 68% 47%;     /* Based on secondary #30C142 */
+    --accent-foreground: 174 35% 11%;
 
     --destructive: 0 84.2% 60.2%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 214.3 31.8% 91.4%;
-    --input: 214.3 31.8% 91.4%;
-    --ring: 221.2 83.2% 53.3%;
+    --border: 174 35% 20%;
+    --input: 174 35% 20%;
+    --ring: 129 68% 47%;
 
     --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 100%;
-    --sidebar-foreground: 240 5.3% 26.1%;
-    --sidebar-primary: 142 69% 62%;
-    --sidebar-primary-foreground: 0 0% 100%;
-    --sidebar-accent: 240 4.8% 95.9%;
-    --sidebar-accent-foreground: 240 5.9% 10%;
-    --sidebar-border: 220 13% 91%;
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --sidebar-background: 174 35% 13%;
+    --sidebar-foreground: 190 4% 87%;
+    --sidebar-primary: 129 68% 47%;
+    --sidebar-primary-foreground: 174 35% 11%;
+    --sidebar-accent: 190 4% 87%;
+    --sidebar-accent-foreground: 174 35% 11%;
+    --sidebar-border: 174 35% 20%;
+    --sidebar-ring: 129 68% 47%;
   }
 
   .dark {
-    --background: 224 71% 4%;
-    --foreground: 210 40% 98%;
+    /* Dark mode already uses our dominant dark color, so we'll keep the same scheme */
+    --background: 174 35% 11%;
+    --foreground: 190 4% 87%;
 
-    --card: 224 71% 4%;
-    --card-foreground: 210 40% 98%;
+    --card: 174 35% 15%;
+    --card-foreground: 190 4% 87%;
 
-    --popover: 224 71% 4%;
-    --popover-foreground: 210 40% 98%;
+    --popover: 174 35% 11%;
+    --popover-foreground: 190 4% 87%;
 
-    --primary: 217.2 91.2% 59.8%;
-    --primary-foreground: 222.2 47.4% 11.2%;
+    --primary: 129 68% 47%;
+    --primary-foreground: 174 35% 11%;
 
-    --secondary: 217.2 32.6% 17.5%;
-    --secondary-foreground: 210 40% 98%;
+    --secondary: 174 35% 20%;
+    --secondary-foreground: 190 4% 87%;
 
-    --muted: 217.2 32.6% 17.5%;
-    --muted-foreground: 215 20.2% 65.1%;
+    --muted: 174 35% 20%;
+    --muted-foreground: 190 4% 70%;
 
-    --accent: 217.2 32.6% 17.5%;
-    --accent-foreground: 210 40% 98%;
+    --accent: 174 35% 20%;
+    --accent-foreground: 190 4% 87%;
 
     --destructive: 0 62.8% 30.6%;
     --destructive-foreground: 210 40% 98%;
 
-    --border: 217.2 32.6% 17.5%;
-    --input: 217.2 32.6% 17.5%;
-    --ring: 224.3 76.3% 48%;
+    --border: 174 35% 20%;
+    --input: 174 35% 20%;
+    --ring: 129 68% 47%;
   }
 }
 
@@ -94,5 +95,42 @@
   
   .text-balance {
     text-wrap: balance;
+  }
+  
+  /* Custom utility classes for our 60-30-10 scheme */
+  .bg-scheme-dominant {
+    @apply bg-[#142524];
+  }
+  
+  .bg-scheme-secondary {
+    @apply bg-[#30C142];
+  }
+  
+  .bg-scheme-accent {
+    @apply bg-[#CCD1D2];
+  }
+  
+  .text-scheme-dominant {
+    @apply text-[#142524];
+  }
+  
+  .text-scheme-secondary {
+    @apply text-[#30C142];
+  }
+  
+  .text-scheme-accent {
+    @apply text-[#CCD1D2];
+  }
+  
+  .border-scheme-dominant {
+    @apply border-[#142524];
+  }
+  
+  .border-scheme-secondary {
+    @apply border-[#30C142];
+  }
+  
+  .border-scheme-accent {
+    @apply border-[#CCD1D2];
   }
 }

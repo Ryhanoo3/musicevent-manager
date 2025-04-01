@@ -20,6 +20,12 @@ export default {
 		},
 		extend: {
 			colors: {
+				// Custom 60-30-10 color scheme
+				scheme: {
+					dominant: '#142524', // 60% - Dark green/blue
+					secondary: '#30C142', // 30% - Bright green
+					accent: '#CCD1D2',    // 10% - Light gray
+				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',
 				ring: 'hsl(var(--ring))',
