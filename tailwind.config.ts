@@ -20,11 +20,11 @@ export default {
 		},
 		extend: {
 			colors: {
-				// Custom 60-30-10 color scheme
+				// Custom color scheme
 				scheme: {
-					dominant: '#142524', // 60% - Dark green/blue
-					secondary: '#30C142', // 30% - Bright green
-					accent: '#CCD1D2',    // 10% - Light gray
+					dominant: '#142524', // Dark teal
+					secondary: '#30C142', // Bright green 
+					accent: '#CCD1D2',    // Light gray
 				},
 				border: 'hsl(var(--border))',
 				input: 'hsl(var(--input))',

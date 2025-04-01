@@ -24,16 +24,19 @@ const FilterDropdown: React.FC<FilterDropdownProps> = ({ label, options, onSelec
   return (
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
-        <Button variant="outline" className="bg-gray-300 border-gray-400 hover:bg-gray-400 transition-colors duration-300 min-w-28 justify-between">
+        <Button 
+          variant="outline" 
+          className="bg-scheme-dominant/70 border-scheme-accent/20 hover:bg-scheme-dominant hover:border-scheme-secondary text-scheme-accent transition-colors duration-300 min-w-28 justify-between"
+        >
           <span>{label}</span>
           <ChevronDown size={16} />
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent className="bg-white shadow-lg border-gray-200 rounded-lg w-full min-w-28 animate-slide-down">
+      <DropdownMenuContent className="bg-scheme-dominant border-scheme-accent/20 rounded-lg w-full min-w-28 animate-slide-down shadow-lg">
         {options.map((option) => (
           <DropdownMenuItem 
             key={option.id} 
-            className="cursor-pointer hover:bg-gray-100 transition-colors"
+            className="cursor-pointer hover:bg-scheme-secondary/10 text-scheme-accent hover:text-scheme-secondary transition-colors"
             onClick={() => onSelect(option.id)}
           >
             {option.label}

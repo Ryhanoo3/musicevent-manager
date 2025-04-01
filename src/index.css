@@ -97,7 +97,7 @@
     text-wrap: balance;
   }
   
-  /* Custom utility classes for our 60-30-10 scheme */
+  /* Custom utility classes for our color scheme */
   .bg-scheme-dominant {
     @apply bg-[#142524];
   }

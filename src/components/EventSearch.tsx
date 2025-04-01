@@ -23,11 +23,11 @@ const EventSearch: React.FC<EventSearchProps> = ({ onSearch }) => {
         placeholder="Search by name"
         value={searchTerm}
         onChange={(e) => setSearchTerm(e.target.value)}
-        className="flex-1 border-gray-300 focus:border-blue-400 focus:ring-blue-300 rounded-lg transition-shadow duration-300"
+        className="flex-1 bg-scheme-dominant/70 border-scheme-accent/20 focus:border-scheme-secondary focus:ring-scheme-secondary rounded-lg transition-shadow duration-300"
       />
       <Button 
         type="submit" 
-        className="bg-gray-700 hover:bg-gray-800 gap-2 transition-all duration-300"
+        className="bg-scheme-secondary text-scheme-dominant hover:bg-scheme-secondary/90 gap-2 transition-all duration-300"
       >
         <Search size={16} />
         <span className="hidden sm:inline">Search</span>
